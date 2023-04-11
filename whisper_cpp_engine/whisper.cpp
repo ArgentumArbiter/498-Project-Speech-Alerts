@@ -722,7 +722,7 @@ static void kv_cache_free(struct whisper_kv_cache & cache) {
 // see the convert-pt-to-ggml.py script for details
 //
 static bool whisper_model_load(struct whisper_model_loader * loader, whisper_context & wctx) {
-    fprintf(stderr, "%s: loading model\n", __func__);
+    //fprintf(stderr, "%s: loading model\n", __func__);
 
     const int64_t t_start_us = ggml_time_us();
 
@@ -785,6 +785,7 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
 
         const size_t scale = model.hparams.f16 ? 1 : 2;
 
+		/*
         fprintf(stderr, "%s: n_vocab       = %d\n", __func__, hparams.n_vocab);
         fprintf(stderr, "%s: n_audio_ctx   = %d\n", __func__, hparams.n_audio_ctx);
         fprintf(stderr, "%s: n_audio_state = %d\n", __func__, hparams.n_audio_state);
@@ -797,7 +798,7 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
         fprintf(stderr, "%s: n_mels        = %d\n", __func__, hparams.n_mels);
         fprintf(stderr, "%s: f16           = %d\n", __func__, hparams.f16);
         fprintf(stderr, "%s: type          = %d\n", __func__, model.type);
-
+		*/
         // print memory requirements
         {
             // this is the total memory required to run the inference
@@ -814,8 +815,8 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
             const size_t mem_required_decoder =
                 scale*MEM_REQ_KV_SELF.at(model.type);
 
-            fprintf(stderr, "%s: mem required  = %7.2f MB (+ %7.2f MB per decoder)\n", __func__,
-                    mem_required / 1024.0 / 1024.0, mem_required_decoder / 1024.0 / 1024.0);
+            //fprintf(stderr, "%s: mem required  = %7.2f MB (+ %7.2f MB per decoder)\n", __func__,
+                    //mem_required / 1024.0 / 1024.0, mem_required_decoder / 1024.0 / 1024.0);
         }
 
         // initialize all memory buffers
@@ -887,7 +888,7 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
         }
 
         if (n_vocab < model.hparams.n_vocab) {
-            fprintf(stderr, "%s: adding %d extra tokens\n", __func__, model.hparams.n_vocab - n_vocab);
+            //fprintf(stderr, "%s: adding %d extra tokens\n", __func__, model.hparams.n_vocab - n_vocab);
             for (int i = n_vocab; i < model.hparams.n_vocab; i++) {
                 if (i > vocab.token_beg) {
                     word = "[_TT_" + std::to_string(i - vocab.token_beg) + "]";
@@ -1021,7 +1022,7 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
 
         ctx_size += (15 + 15*n_audio_layer + 24*n_text_layer)*256; // object overhead
 
-        fprintf(stderr, "%s: model ctx     = %7.2f MB\n", __func__, ctx_size/(1024.0*1024.0));
+        //fprintf(stderr, "%s: model ctx     = %7.2f MB\n", __func__, ctx_size/(1024.0*1024.0));
     }
 
     // create the ggml context
@@ -1297,7 +1298,7 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
             model.n_loaded++;
         }
 
-        fprintf(stderr, "%s: model size    = %7.2f MB\n", __func__, total_size/1024.0/1024.0);
+        //fprintf(stderr, "%s: model size    = %7.2f MB\n", __func__, total_size/1024.0/1024.0);
 
         if (model.n_loaded == 0) {
             fprintf(stderr, "%s: WARN no tensors loaded from model file - assuming empty model for testing\n", __func__);
@@ -2490,7 +2491,7 @@ struct whisper_state * whisper_init_state(whisper_context * ctx) {
 
     {
         const size_t memory_size = ggml_nbytes(state->decoders[0].kv_self.k) + ggml_nbytes(state->decoders[0].kv_self.v);
-        fprintf(stderr, "%s: kv self size  = %7.2f MB\n", __func__, memory_size / 1024.0 / 1024.0);
+        //fprintf(stderr, "%s: kv self size  = %7.2f MB\n", __func__, memory_size / 1024.0 / 1024.0);
     }
 
     if (!kv_cache_init(ctx->model.hparams, scale * MEM_REQ_KV_CROSS.at(ctx->model.type), state->kv_cross, ctx->wtype, ctx->model.hparams.n_audio_ctx)) {
@@ -2500,7 +2501,7 @@ struct whisper_state * whisper_init_state(whisper_context * ctx) {
 
     {
         const size_t memory_size = ggml_nbytes(state->kv_cross.k) + ggml_nbytes(state->kv_cross.v);
-        fprintf(stderr, "%s: kv cross size = %7.2f MB\n", __func__, memory_size / 1024.0 / 1024.0);
+        //fprintf(stderr, "%s: kv cross size = %7.2f MB\n", __func__, memory_size / 1024.0 / 1024.0);
     }
 
 
@@ -2529,7 +2530,7 @@ struct whisper_state * whisper_init_state(whisper_context * ctx) {
 struct whisper_context * whisper_init_from_file_no_state(const char * path_model) {
     whisper_model_loader loader = {};
 
-    fprintf(stderr, "%s: loading model from '%s'\n", __func__, path_model);
+    //fprintf(stderr, "%s: loading model from '%s'\n", __func__, path_model);
 
     auto fin = std::ifstream(path_model, std::ios::binary);
     if (!fin) {
