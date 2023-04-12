@@ -276,7 +276,8 @@ int process_command_list(struct whisper_context * ctx, audio_async &audio, const
                         probs[i] /= sum;
                     }
                 }
-				/*
+				
+				
                 std::vector<std::pair<float, int>> probs_id;
 
                 double psum = 0.0;
@@ -292,14 +293,16 @@ int process_command_list(struct whisper_context * ctx, audio_async &audio, const
                 // normalize
                 for (auto & p : probs_id) {
                     p.first /= psum;
-                }*/
-
-				float probab = probs[allowed_tokens[0][1]];
+                }
+				
+				float probab =
+					probs[allowed_tokens[0][(int) allowed_tokens[0].size() - 1]];
 				std::ofstream outfile("output.txt");
+				fprintf(stdout, "%f PROBAB\n", probab);
 				outfile << probab << "\n";
 				outfile.close();
             }
-
+			
             audio.clear();
         }
     }
