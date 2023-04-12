@@ -116,8 +116,25 @@ int process_command_list(struct whisper_context * ctx, audio_async &audio, const
     fprintf(stderr, "\n");
     fprintf(stderr, "%s: guided mode\n", __func__);
 
-	std::vector<std::string> allowed_commands = {"jesse"};
-
+	std::vector<std::string> allowed_commands = {"hello"};
+	
+	
+	// Initializes allowed_commands from command.txt
+	std::string temp;
+	std::ifstream command_file("command.txt");
+	
+	if (!command_file.is_open()) {
+		std::ofstream open_file("command.txt");
+		open_file.close();
+	}
+	
+	command_file >> temp;
+	std::cout << temp << "\n";
+	command_file.close();
+	
+	if (!temp.empty())
+		allowed_commands[0] = temp;
+	
     int max_len = 0;
 
     std::vector<std::vector<whisper_token>> allowed_tokens;
