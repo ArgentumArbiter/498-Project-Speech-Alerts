@@ -21,6 +21,8 @@
 #include <vector>
 #include <map>
 
+#include <cmath>
+
 #include <iostream>
 // command-line parameters
 struct whisper_params {
@@ -299,7 +301,7 @@ int process_command_list(struct whisper_context * ctx, audio_async &audio, const
 					probs[allowed_tokens[0][(int) allowed_tokens[0].size() - 1]];
 				std::ofstream outfile("output.txt");
 				fprintf(stdout, "%f PROBAB\n", probab);
-				outfile << probab << "\n";
+				outfile << probab;
 				outfile.close();
             }
 			

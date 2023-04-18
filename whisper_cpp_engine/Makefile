@@ -30,8 +30,8 @@ endif
 # Compile flags
 #
 
-CFLAGS   = -I.              -O3 -DNDEBUG -std=c11   -fPIC
-CXXFLAGS = -I. -I./examples -O3 -DNDEBUG -std=c++11 -fPIC
+CFLAGS   = -I.              -O3 -std=c11 
+CXXFLAGS = -I. -I./examples -O3 -std=c++11 
 LDFLAGS  =
 
 # ref: https://github.com/ggerganov/whisper.cpp/issues/37
@@ -185,10 +185,10 @@ default: main
 #
 
 ggml.o: ggml.c ggml.h
-	$(CC)  $(CFLAGS)   -c ggml.c -o ggml.o
+	x86_64-w64-mingw32-gcc-posix  -I.              -O3 -std=c11  -mfma -mf16c -mavx -mavx2 -c ggml.c -o ggml.o
 
 whisper.o: whisper.cpp whisper.h
-	$(CXX) $(CXXFLAGS) -c whisper.cpp -o whisper.o
+	x86_64-w64-mingw32-g++-posix -I. -I./examples -O3 -std=c++11  -lwinpthread -c whisper.cpp -o whisper.o
 
 libwhisper.a: ggml.o whisper.o
 	$(AR) rcs libwhisper.a ggml.o whisper.o
@@ -216,7 +216,7 @@ stream: examples/stream/stream.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o whispe
 	$(CXX) $(CXXFLAGS) examples/stream/stream.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o whisper.o -o stream $(CC_SDL) $(LDFLAGS)
 
 command: examples/command/command.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o whisper.o
-	$(CXX) $(CXXFLAGS) examples/command/command.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o whisper.o -o command $(CC_SDL) $(LDFLAGS)
+	x86_64-w64-mingw32-g++-posix -L/mnt/c/SDL2/x86_64-w64-mingw32/lib -I/mnt/c/SDL2/x86_64-w64-mingw32/include/SDL2 -lmingw32 -lSDL2main -lSDL2 -I. -I./examples -O3 -std=c++11  -static-libgcc -static-libstdc++ -lwinpthread examples/command/command.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o whisper.o -o command $(CC_SDL) $(LDFLAGS) 
 
 talk: examples/talk/talk.cpp examples/talk/gpt-2.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o whisper.o
 	$(CXX) $(CXXFLAGS) examples/talk/talk.cpp examples/talk/gpt-2.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o whisper.o -o talk $(CC_SDL) $(LDFLAGS)
